@@ -1,20 +1,29 @@
 /*
-The boxes will have IDs which differ by exactly one character at the same position in both strings. For example, given the following box IDs:
+The problem is that many of the claims overlap, causing two or more claims to 
+cover part of the same areas. For example, consider the following claims:
 
-abcde
-fghij
-klmno
-pqrst
-fguij
-axcye
-wvxyz
-The IDs abcde and axcye are close, but they differ by two characters 
-(the second and fourth). However, the IDs fghij and fguij differ by exactly 
-one character, the third (h and u). Those must be the correct boxes.
+#1 @ 1,3: 4x4
+#2 @ 3,1: 4x4
+#3 @ 5,5: 2x2
+Visually, these claim the following areas:
 
-What letters are common between the two correct box IDs? (In the example above, 
-  this is found by removing the differing character from either ID, 
-  producing fgij.)
+........
+...2222.
+...2222.
+.11XX22.
+.11XX22.
+.111133.
+.111133.
+........
+The four square inches marked with X are claimed by both 1 and 2. (Claim 3, 
+  while adjacent to the others, does not overlap either of them.)
+
+Amidst the chaos, you notice that exactly one claim doesn't overlap by even a single square inch of fabric with any other claim. 
+If you can somehow draw attention to it, maybe the Elves will be able to make Santa's suit after all!
+
+For example, in the claims above, only claim 3 is intact after all claims are made.
+
+What is the ID of the only claim that doesn't overlap?
 */
 
 const assert = require('assert')
@@ -22,17 +31,14 @@ const solution = require('./solution')
 
 const testinput =
 `
-abcde
-fghij
-klmno
-pqrst
-fguij
-axcye
-wvxyz
+#1 @ 1,3: 4x4
+#2 @ 3,1: 4x4
+#3 @ 5,5: 2x2
 `
 
 describe('solution', () => {
   it('should return the checksum of the input strings', () => {
-    assert.equal(solution(testinput), 'fgij')
+    assert.equal(solution(testinput), 3)
   })
 })
+

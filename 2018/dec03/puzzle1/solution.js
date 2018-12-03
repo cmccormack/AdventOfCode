@@ -12,16 +12,24 @@ const stringCleaning = str => str.trim().split(/\r?\n+/)
 
 module.exports = (str, start=0) => {
 
-  const arr = stringCleaning(str).map(str => {
+  const claims = stringCleaning(str)
+  const coords = {}
+  
+  // Loop over all claims to add coordinates to coords
+  claims.forEach(claim => {
 
-    const coords = {}
-    
     // Parse strings into rectangle coordinates and size
-    const [x,y] = str.match(/(\d+,\d+)/g)[0].split(',').map(Number)
-    const [width,height] = str.match(/(\d+x\d+)/)[0].split('x').map(Number)
+    const [x,y] = claim.match(/(\d+,\d+)/g)[0].split(',').map(Number)
+    const [width,height] = claim.match(/(\d+x\d+)/)[0].split('x').map(Number)
 
-    // for ()
+
+    for (let row = y; row < height + y; row+=1) {
+      for (let col = x; col < width + x; col+=1) {
+        const coord = `${row},${col}`
+        coords[coord] = coords[coord] ? coords[coord] + 1 : 1
+      }
+    }
   })
 
-  return null
+  return Object.values(coords).filter(count => count > 1).length
 }

@@ -1,29 +1,45 @@
 // Trim and split text into an Array of strings
-const stringCleaning = str => str.trim().split(/\s+/)
+const stringCleaning = str => str.trim().split(/\r?\n+/)
+
+
+/*
+
+#1 @ 1,3: 4x4
+#2 @ 3,1: 4x4
+#3 @ 5,5: 2x2
+
+*/
 
 module.exports = (str, start=0) => {
 
-  const arr = stringCleaning(str)
+  const claims = stringCleaning(str)
+  const coords = {}
+  const candidates = new Set()
+  
+  // Loop over all claims to add coordinates to coords
+  claims.forEach(claim => {
 
-  const arrlen = arr.length
-  const strlen = arr[0].length
+    // Parse strings into id, rectangle coordinates, and rectangle size
+    const id = claim.match(/#(\d+)/g)[0].slice(1)
+    const [x,y] = claim.match(/(\d+,\d+)/g)[0].split(',').map(Number)
+    const [width,height] = claim.match(/(\d+x\d+)/)[0].split('x').map(Number)
 
-  // Iterate over each string character
-  for (i=0; i < strlen; i+=1) {
-    // Create new array with a single character at the same index omitted
-    const slicedArr = arr.map(v => v.slice(0, i) + v.slice(i + 1))
+    candidates.add(id)
 
-    // If set size is smaller than array, you've found the single different char
-    if (new Set(slicedArr).size < arrlen) {
-      const obj = {}
-
-      // Find the matching strings using existence in object
-      for (str of slicedArr) {
-        if (obj[str]) { // match found
-          return str
+    for (let row = y; row < height + y; row+=1) {
+      for (let col = x; col < width + x; col+=1) {
+        const coord = `${row},${col}`
+        if (coords[coord]) {
+          coords[coord].count += 1
+          coords[coord].ids.push(id)
+          coords[coord].ids.forEach(id => candidates.delete(id))
+        } else {
+          coords[coord] = {count: 1, ids: [id]}
         }
-        obj[str] = true
       }
     }
-  }
+  })
+
+  return candidates.values().next().value
+
 }
