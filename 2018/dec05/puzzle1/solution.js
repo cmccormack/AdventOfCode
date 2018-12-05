@@ -12,8 +12,6 @@ module.exports = (str, start=0) => {
   const lowerExtent = [97, 122]
   const upperExtent = [65, 90]
 
-  console.log(polymer)
-
   let i = 0
 
   while (polymer[i]) {
